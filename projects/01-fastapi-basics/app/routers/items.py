@@ -3,6 +3,7 @@ from pydantic import BaseModel
 
 router = APIRouter()
 
+
 # ── Data model (Pydantic validates input automatically) ───────────────
 class Item(BaseModel):
     name: str

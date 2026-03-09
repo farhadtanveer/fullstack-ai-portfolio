@@ -5,6 +5,7 @@ Key pattern: AI inference logic lives HERE, not in the router.
 The router just calls this service. This separation makes
 the code testable and clean.
 """
+
 import joblib
 from pathlib import Path
 

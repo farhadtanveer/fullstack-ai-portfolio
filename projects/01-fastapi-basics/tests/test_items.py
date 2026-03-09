@@ -2,6 +2,7 @@
 Tests for Project 01 — FastAPI Basics.
 Run with: pytest tests/ -v
 """
+
 from fastapi.testclient import TestClient
 from app.main import app
 
