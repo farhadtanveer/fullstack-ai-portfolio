@@ -1,0 +1,13 @@
+# <type>: <short description>
+
+# Types:
+# feat     New feature
+# fix      Bug fix
+# docs     Documentation
+# refactor Code change without behavior change
+# chore    Config/dependency updates
+# test     Add or fix tests
+# style    Formatting only
+
+# Example:
+# feat(project-02): add POST /todos endpoint
