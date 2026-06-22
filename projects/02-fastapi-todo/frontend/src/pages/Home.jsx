@@ -38,6 +38,7 @@ export default function Home() {
       {data.map((item, index) => (
         <div key={index}>
           <h3>{item.title}</h3>
+          <p>{item.description}</p>
         </div>
       ))}
     </div>

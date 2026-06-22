@@ -4,10 +4,10 @@ from typing import Optional
 class Todo(BaseModel):
     id: int
     title: str
-    description: Optional[str] = None  # Now it's optional and defaults to None
+    description: Optional[str] = None
     completed: bool = False
 
 class Todo_request(BaseModel):
     title: str
-    description: Optional[str] = None  # Match it here as well
+    description: Optional[str] = None
     completed: bool = False
