@@ -22,7 +22,6 @@ app.add_middleware(
 
 app.include_router(todo_router, prefix="/api")
 
-
 @app.get("/", response_model=List[Todo], summary="Get all todos")
 async def root():
     """
