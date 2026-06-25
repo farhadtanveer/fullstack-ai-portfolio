@@ -1,6 +1,5 @@
 # FastAPI — সম্পূর্ণ বাংলা নোট
 
-> **লেখক:** Farhad | **উদ্দেশ্য:** জার্মান কোম্পানিতে Backend Developer হিসেবে কাজের জন্য FastAPI শেখা
 > **Stack:** FastAPI + SQLAlchemy + Pydantic + Alembic + MySQL/PostgreSQL
 
 ---
