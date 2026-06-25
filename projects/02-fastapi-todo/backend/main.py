@@ -4,6 +4,8 @@ from enum import Enum
 from utils.dummy import dummy_todos
 from todo.router import router as todo_router
 from todo.schemas import Todo
+from todo import models
+from database import engine
 
 # cors
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,6 +33,7 @@ async def root():
     """
     return dummy_todos
 
+models.Base.metadata.create_all(bind=engine)
 
 # from fastapi import FastAPI
 # from typing import Optional, List
