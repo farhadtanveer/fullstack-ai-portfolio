@@ -63,7 +63,7 @@ async def create(data: ProductIn):   # FastAPI type hint পড়ে auto valid
 
 ## ২. প্রজেক্ট স্ট্রাকচার
 
-জার্মান কোম্পানিগুলো (Celonis, Personio, CHECK24) **domain-driven** structure follow করে। মানে technical type অনুযায়ী না, **business feature** অনুযায়ী folder ভাগ করা হয়।
+কোম্পানিগুলো (Celonis, Personio, CHECK24) **domain-driven** structure follow করে। মানে technical type অনুযায়ী না, **business feature** অনুযায়ী folder ভাগ করা হয়।
 
 ### পুরো প্রজেক্ট layout:
 
