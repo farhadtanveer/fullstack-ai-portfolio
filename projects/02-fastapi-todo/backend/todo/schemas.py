@@ -5,9 +5,9 @@ class Todo(BaseModel):
     id: int
     title: str
     description: Optional[str] = None
-    completed: bool = False
+    completed: bool
 
 class Todo_request(BaseModel):
     title: str
     description: Optional[str] = None
-    completed: bool = False
+    completed: bool 

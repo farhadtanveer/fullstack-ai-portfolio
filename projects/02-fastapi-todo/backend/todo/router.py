@@ -22,7 +22,9 @@ async def item(id: int, response: Response):
 @router.post('/new_todo/{id}', response_model = Todo)
 async def new_todo(
     todo: Todo_request = Body(...,description="The todo item to create"),
-    id: int = Path(description="The ID of the todo item")):
+    id: int = Path(description="The ID of the todo item")
+    ):
+    
     return {
         "id": id,
         "title": todo.title,
