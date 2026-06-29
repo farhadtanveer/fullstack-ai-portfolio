@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import NewTodo from "../components/NewTodo";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -11,11 +11,10 @@ export default function Home() {
     try {
       setLoading(true);
       const response = await axios.get("http://127.0.0.1:8000/api/todo/");
-      console.log(response.data);
       setData(response.data);
     } catch (error) {
-      setError(true);
       console.error("Error fetching data:", error);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -26,23 +25,49 @@ export default function Home() {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center text-lg font-medium text-gray-600">
+        Loading...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="">Error fetching data.</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center text-red-500 font-semibold">
+        Error fetching data.
+      </div>
+    );
   }
 
   return (
-    <div>
-      <h1>My Todos</h1>
-      <ol>
-        {data.map((item, index) => (
-          <li key={index}>
-            <p>{item.title}</p>
-          </li>
-        ))}
-      </ol>
+    <div className="min-h-screen bg-gray-100 px-4 py-10">
+      <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-2">
+        {/* Form Section */}
+        <div>
+          <NewTodo setData={setData} />
+        </div>
+
+        {/* Todo List Section */}
+        <div className="rounded-xl bg-white p-6 shadow-lg">
+          <h2 className="mb-4 text-2xl font-bold text-gray-800">Todo List</h2>
+
+          {data.length === 0 ? (
+            <p className="text-gray-500">No todos found.</p>
+          ) : (
+            <ul className="space-y-3">
+              {data.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-lg border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100"
+                >
+                  <p className="font-medium text-gray-800">{item.title}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
