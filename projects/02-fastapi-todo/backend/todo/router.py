@@ -1,12 +1,27 @@
-from fastapi import APIRouter, Response, status, Query, Body, Path
+from ast import List
+
+from fastapi import APIRouter, Depends, Response, status, Query, Body, Path
+from database import get_db
 from utils.dummy import Order_by
 from .schemas import Todo_request, Todo
+from .models import Todo as TodoModel
+from sqlalchemy.orm import Session
+from typing import List
 
 
 router = APIRouter(
     prefix="/todo",
     tags=["todo"],
 )
+
+@router.get("/", response_model=List[Todo], summary="Get all todos")
+async def root(db: Session = Depends(get_db)):
+    """
+    - This endpoint returns a list of all todo items.
+    - Each todo item includes an id, title, description, and completion status.
+    - The response is a JSON array of todo items.
+    """
+    return db.query(TodoModel).order_by(TodoModel.id.desc()).all()
 
 @router.get("/item/all")
 async def all_items(order: Order_by = None):
@@ -20,14 +35,18 @@ async def item(id: int, response: Response):
     return {'item': f'Item with id {id}'}
 
 @router.post('/new_todo/{id}', response_model = Todo)
-async def new_todo(
-    todo: Todo_request = Body(...,description="The todo item to create"),
-    id: int = Path(description="The ID of the todo item")
+async def create_todo(
+    request: Todo_request,
+    db: Session = Depends(get_db),
     ):
-    
-    return {
-        "id": id,
-        "title": todo.title,
-        "description": todo.description,
-        "completed": todo.completed
-    }
+
+    new_todo = TodoModel(
+        title=request.title,
+        description=request.description,
+        completed=request.completed
+    )
+    db.add(new_todo)
+    db.commit()
+    db.refresh(new_todo)
+
+    return new_todo

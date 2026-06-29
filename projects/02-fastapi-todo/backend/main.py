@@ -1,11 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from typing import Optional, List
 from enum import Enum
 from utils.dummy import dummy_todos
 from todo.router import router as todo_router
 from todo.schemas import Todo
 from todo import models
-from database import engine
+from database import engine, get_db
+from todo.models import Todo as TodoModel
+from sqlalchemy.orm import Session
 
 # cors
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,15 +25,6 @@ app.add_middleware(
 )
 
 app.include_router(todo_router, prefix="/api")
-
-@app.get("/", response_model=List[Todo], summary="Get all todos")
-async def root():
-    """
-    - This endpoint returns a list of all todo items.
-    - Each todo item includes an id, title, description, and completion status.
-    - The response is a JSON array of todo items.
-    """
-    return dummy_todos
 
 models.Base.metadata.create_all(bind=engine)
 

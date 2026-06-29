@@ -10,7 +10,7 @@ export default function Home() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://127.0.0.1:8000/");
+      const response = await axios.get("http://127.0.0.1:8000/api/todo/");
       console.log(response.data);
       setData(response.data);
     } catch (error) {
@@ -35,12 +35,14 @@ export default function Home() {
 
   return (
     <div>
-      {data.map((item, index) => (
-        <div key={index}>
-          <h3>{item.title}</h3>
-          <p>{item.description}</p>
-        </div>
-      ))}
+      <h1>My Todos</h1>
+      <ol>
+        {data.map((item, index) => (
+          <li key={index}>
+            <p>{item.title}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }
