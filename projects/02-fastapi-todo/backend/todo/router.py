@@ -1,6 +1,6 @@
 from ast import List
 
-from fastapi import APIRouter, Depends, Response, status, Query, Body, Path
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Query, Body, Path
 from database import get_db
 from utils.dummy import Order_by
 from .schemas import Todo_request, Todo
@@ -50,3 +50,24 @@ async def create_todo(
     db.refresh(new_todo)
 
     return new_todo
+
+
+@router.put('/{id}/update_todo', response_model = Todo)
+async def update_todo(
+    id: int,
+    request: Todo_request,
+    db: Session = Depends(get_db)
+):
+    todo_model = db.query(TodoModel).filter(TodoModel.id == id).first()
+
+    if not todo_model:
+     raise HTTPException(status_code=404, detail="Todo not found")
+
+    todo_model.title = request.title
+    todo_model.description = request.description
+    todo_model.completed = request.completed
+
+    db.commit()
+    db.refresh(todo_model)
+
+    return todo_model
