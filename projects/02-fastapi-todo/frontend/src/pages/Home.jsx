@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import NewTodo from "../components/NewTodo";
+import { Link } from "react-router";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -44,9 +45,16 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 px-4 py-10">
       <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-2">
         {/* Form Section */}
-        <div>
+        {/* <div>
           <NewTodo setData={setData} />
-        </div>
+        </div> */}
+
+        <Link
+          to="/newTodo"
+          className="mb-4 inline-block rounded bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600"
+        >
+          Add New Todo
+        </Link>
 
         {/* Todo List Section */}
         <div className="rounded-xl bg-white p-6 shadow-lg">
