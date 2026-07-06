@@ -49,12 +49,15 @@ export default function Home() {
           <NewTodo setData={setData} />
         </div> */}
 
-        <Link
-          to="/newTodo"
-          className="mb-4 inline-block rounded bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600"
-        >
-          Add New Todo
-        </Link>
+        {/* create simple button */}
+        <div className="flex items-center justify-center">
+          <Link
+            to="/new"
+            className="rounded-lg bg-blue-500 px-6 py-3 text-white transition hover:bg-blue-600"
+          >
+            Add New Todo
+          </Link>
+        </div>
 
         {/* Todo List Section */}
         <div className="rounded-xl bg-white p-6 shadow-lg">
