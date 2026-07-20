@@ -9,6 +9,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/new" element={<TodoForm />} />
       <Route path="/todo/:id" element={<TodoDetails />} />
+      <Route path="/edit/:id" element={<TodoForm />} />
     </Routes>
   );
 }

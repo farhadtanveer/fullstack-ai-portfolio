@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import API from "../api/api";
 
 const TodoForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const todo = location.state?.todo;
+
+  const isEditMode = !!todo; // Check if we are in edit mode based on the presence of a todo object
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,11 +22,19 @@ const TodoForm = () => {
     const completed = formData.get("completed") === "on"; // Convert checkbox value to boolean
 
     try {
-      await API.post("/todo/new_todo", {
-        title: title,
-        description: description,
-        completed: completed,
-      });
+      if (isEditMode) {
+        await API.put(`/todo/${todo.id}/update_todo`, {
+          title: title,
+          description: description,
+          completed: completed,
+        });
+      } else {
+        await API.post("/todo/new_todo", {
+          title: title,
+          description: description,
+          completed: completed,
+        });
+      }
       navigate("/"); // Redirect to the home page after successful submission
     } catch (e) {
       console.error("Failed to create Todo!", e);
@@ -53,6 +65,7 @@ const TodoForm = () => {
               id="title"
               name="title"
               required
+              defaultValue={todo?.title || ""}
               placeholder="Enter todo title..."
               className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             />
@@ -71,6 +84,7 @@ const TodoForm = () => {
               name="description"
               placeholder="Enter todo description..."
               className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+              defaultValue={todo?.description || ""}
             />
           </div>
 
@@ -87,6 +101,7 @@ const TodoForm = () => {
               id="completed"
               name="completed"
               className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
+              defaultChecked={todo?.completed || false}
             />
           </div>
 
@@ -95,7 +110,8 @@ const TodoForm = () => {
             disabled={loading}
             className="w-full rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white transition hover:bg-blue-700 active:scale-[0.98]"
           >
-            {loading ? "Adding..." : "Add Todo"}
+            {/* if we are in edit mode */}
+            {loading ? "Saving..." : isEditMode ? "Update Todo" : "Add Todo"}
           </button>
 
           {error && (

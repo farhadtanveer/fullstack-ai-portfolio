@@ -70,11 +70,21 @@ export default function Home() {
               {data.map((item) => (
                 <li
                   key={item.id}
-                  className="rounded-lg border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100"
+                  className="flex justify-between  rounded-lg border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100"
                 >
                   <p className="font-medium text-gray-800">
                     <Link to={`/todo/${item.id}`} state={{ todo: item }}>
                       {item.title}
+                    </Link>
+                  </p>
+                  {/* add edit option */}
+                  <p>
+                    <Link
+                      to={`/edit/${item.id}`}
+                      state={{ todo: item }}
+                      className="ml-4 rounded-lg bg-blue-500 px-3 py-1 text-sm text-white transition hover:bg-blue-600"
+                    >
+                      Edit
                     </Link>
                   </p>
                 </li>

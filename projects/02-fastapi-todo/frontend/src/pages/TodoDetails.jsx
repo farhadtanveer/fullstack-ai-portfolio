@@ -1,5 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router";
+import { Link } from "react-router";
 
 const TodoDetails = () => {
   const location = useLocation();
@@ -26,6 +27,13 @@ const TodoDetails = () => {
           >
             Back
           </button>
+          <Link
+            to={`/edit/${todo.id}`}
+            state={{ todo: todo }}
+            className="ml-4 rounded-lg bg-blue-500 px-6 py-3 text-white transition hover:bg-blue-600"
+          >
+            Edit
+          </Link>
         </div>
       </div>
     </div>
