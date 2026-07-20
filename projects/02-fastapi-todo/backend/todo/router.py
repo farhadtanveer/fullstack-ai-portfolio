@@ -6,7 +6,8 @@ from .models import Todo as TodoModel
 from sqlalchemy.orm import Session
 from typing import List
 
-
+# set prefix to /todo so that all todo endpoints are prefixed with /todo
+# so that the full path to the endpoint is /api/todo/
 router = APIRouter(
     prefix="/todo",
     tags=["todo"],
@@ -24,7 +25,21 @@ async def root(
     """
     return db.query(TodoModel).order_by(TodoModel.id.desc()).all()
 
-@router.post('/new_todo/{id}', response_model = Todo)
+# Get a specific todo item by ID
+@router.get("/{id}", response_model=Todo, summary="Get a todo by ID")
+async def get_todo(id: int, db: Session = Depends(get_db)):
+    """
+    - This endpoint retrieves a specific todo item by its ID.
+    - If the todo item is found, it returns the item as a JSON object.
+    - If the todo item is not found, it raises a 404 HTTP exception.
+    """
+    todo_model = db.query(TodoModel).filter(TodoModel.id == id).first()
+    if not todo_model:
+        raise HTTPException(status_code=404, detail="Todo not found")
+    return todo_model
+
+# Create a new todo item
+@router.post('/new_todo', response_model = Todo)
 async def create_todo(
     request: Todo_request,
     db: Session = Depends(get_db),
@@ -41,7 +56,7 @@ async def create_todo(
 
     return new_todo
 
-
+# Update an existing todo item
 @router.put('/{id}/update_todo', response_model = Todo)
 async def update_todo(
     id: int,

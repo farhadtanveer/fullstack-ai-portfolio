@@ -13,7 +13,7 @@ const NewTodo = ({ setData }) => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/todo/new_todo/{id}",
+        "http://127.0.0.1:8000/api/todo/new_todo",
         {
           title: title,
           description: "", // You can add a description field if needed
@@ -22,7 +22,7 @@ const NewTodo = ({ setData }) => {
       );
       const newTodo = response.data;
       setData((prevData) => [newTodo, ...prevData]);
-      console.log("Todo added:", response.data);
+      // console.log("Todo added:", response.data);
       // Clear the form after successful submission
       formElement.reset();
     } catch (error) {

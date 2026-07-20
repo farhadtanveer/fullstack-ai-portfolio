@@ -1,10 +1,10 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
+import API from "../api/api";
 
 const TodoForm = () => {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,17 +14,18 @@ const TodoForm = () => {
     const formElement = e.currentTarget;
     const formData = new FormData(formElement);
     const title = formData.get("title");
-    console.log(title);
+    const description = formData.get("description");
+    const completed = formData.get("completed") === "on"; // Convert checkbox value to boolean
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/todo/new_todo/{id}", {
+      await API.post("/todo/new_todo", {
         title: title,
-        description: "", // You can add a description field if needed
-        completed: false, // Set completed to false by default
+        description: description,
+        completed: completed,
       });
       navigate("/"); // Redirect to the home page after successful submission
     } catch (e) {
-      console.error("Error fetching data:", e);
+      console.error("Failed to create Todo!", e);
       setError(true);
     } finally {
       setLoading(false);
@@ -51,6 +52,7 @@ const TodoForm = () => {
               type="text"
               id="title"
               name="title"
+              required
               placeholder="Enter todo title..."
               className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
             />
@@ -64,8 +66,7 @@ const TodoForm = () => {
               Description
             </label>
 
-            <input
-              type="text"
+            <textarea
               id="description"
               name="description"
               placeholder="Enter todo description..."
@@ -96,6 +97,12 @@ const TodoForm = () => {
           >
             {loading ? "Adding..." : "Add Todo"}
           </button>
+
+          {error && (
+            <p className="text-sm text-red-600">
+              Failed to create Todo. Please try again.
+            </p>
+          )}
         </form>
       </div>
     </div>

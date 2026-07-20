@@ -24,6 +24,8 @@ app.add_middleware(
     allow_credentials=True,
 )
 
+# Include the todo router
+# set prefix to /api so that all todo endpoints are prefixed with /api
 app.include_router(todo_router, prefix="/api")
 
 models.Base.metadata.create_all(bind=engine)

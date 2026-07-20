@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import NewTodo from "../components/NewTodo";
 import { Link } from "react-router";
+import API from "../api/api";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -11,7 +11,7 @@ export default function Home() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://127.0.0.1:8000/api/todo/");
+      const response = await API.get("/todo");
       setData(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -72,7 +72,11 @@ export default function Home() {
                   key={item.id}
                   className="rounded-lg border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100"
                 >
-                  <p className="font-medium text-gray-800">{item.title}</p>
+                  <p className="font-medium text-gray-800">
+                    <Link to={`/todo/${item.id}`} state={{ todo: item }}>
+                      {item.title}
+                    </Link>
+                  </p>
                 </li>
               ))}
             </ul>
