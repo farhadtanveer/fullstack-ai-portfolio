@@ -1,7 +1,7 @@
 from ast import List
 from fastapi import APIRouter, Depends, HTTPException, Response, status, Query, Body, Path
 from database import get_db
-from .schemas import Todo_request, Todo
+from .schemas import Todo_request, Todo, Todo_title
 from .models import Todo as TodoModel
 from sqlalchemy.orm import Session
 from typing import List
@@ -13,7 +13,7 @@ router = APIRouter(
     tags=["todo"],
 )
 
-@router.get("/", response_model=List[Todo], summary="Get all todos")
+@router.get("/", response_model=List[Todo_title], summary="Get all todos")
 async def root(
     # ekhane keno amra db inject korchi? karon amra database er sathe interact korte chai, tai amra get_db function ke dependency hishebe use korchi. get_db function ta ekta database session return kore, ja amader CRUD operations er jonno dorkar.
    db: Session = Depends(get_db)
@@ -76,3 +76,14 @@ async def update_todo(
     db.refresh(todo_model)
 
     return todo_model
+
+@router.delete("/{id}/delete_todo", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_todo( id: int, db: Session = Depends(get_db)):
+    todo_model = db.query(TodoModel).filter(TodoModel.id == id).delete()
+
+    if not todo_model:
+        raise HTTPException(status_code=404, detail="Todo not found")
+
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)

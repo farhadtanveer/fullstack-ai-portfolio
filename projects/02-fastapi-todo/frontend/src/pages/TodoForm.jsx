@@ -1,15 +1,37 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router";
 import API from "../api/api";
 
 const TodoForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const todo = location.state?.todo;
+  const [todo, setTodo] = useState(null);
 
-  const isEditMode = !!todo; // Check if we are in edit mode based on the presence of a todo object
+  const { id } = useParams();
+
+  const isEditMode = !!id; // Check if we are in edit mode based on the presence of a todo object
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await API.get(`/todo/${id}`);
+      // console.log(response.data);
+      setTodo(response.data);
+    } catch (e) {
+      console.error("Error fetching data:", e);
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isEditMode) {
+      fetchData();
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,11 +66,27 @@ const TodoForm = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-lg font-medium text-gray-600">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-red-500 font-semibold">
+        Error fetching data.
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
         <h2 className="mb-6 text-center text-3xl font-bold text-gray-800">
-          Add New Todo
+          {isEditMode ? "Edit Todo" : "Add New Todo"}
         </h2>
 
         <form className="space-y-5" onSubmit={handleSubmit}>

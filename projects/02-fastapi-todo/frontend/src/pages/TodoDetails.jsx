@@ -1,13 +1,48 @@
-import React from "react";
-import { useLocation } from "react-router";
+import React, { useEffect, useState, useParams } from "react";
 import { Link } from "react-router";
+import API from "../api/api";
 
 const TodoDetails = () => {
-  const location = useLocation();
-  const todo = location.state?.todo;
+  const { id } = useParams();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  if (!todo) {
-    return <div>Todo not found.</div>;
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await API.get(`/todo/${id}`);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      setData(response.data);
+    } catch (e) {
+      console.error("Error fetching data:", e);
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  if (loading || !data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-lg font-medium text-gray-600">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-red-500 font-semibold">
+        Error fetching data.
+      </div>
+    );
   }
 
   // show todo details page with title, description and completed status
@@ -16,9 +51,9 @@ const TodoDetails = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
         <div>
-          <h1>Title: {todo.title}</h1>
-          <p>Description: {todo.description}</p>
-          <p>{todo.completed ? <p>Completed</p> : <p>Not Completed</p>}</p>
+          <h1>Title: {data?.title}</h1>
+          <p>Description: {data?.description}</p>
+          <p>{data?.completed ? <p>Completed</p> : <p>Not Completed</p>}</p>
         </div>
         <div className="mt-4">
           <button
@@ -28,8 +63,7 @@ const TodoDetails = () => {
             Back
           </button>
           <Link
-            to={`/edit/${todo.id}`}
-            state={{ todo: todo }}
+            to={`/edit/${data?.id}`}
             className="ml-4 rounded-lg bg-blue-500 px-6 py-3 text-white transition hover:bg-blue-600"
           >
             Edit

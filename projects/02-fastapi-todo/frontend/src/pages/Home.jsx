@@ -21,6 +21,16 @@ export default function Home() {
     }
   };
 
+  const deleteTodo = async (id) => {
+    try {
+      await API.delete(`/todo/${id}/delete_todo`);
+      fetchData(); // Refresh the todo list after deletion
+    } catch (error) {
+      console.error("Error deleting todo:", error);
+      setError(true);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -42,15 +52,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 px-4 py-10">
-      <div className="mx-auto grid max-w-5xl gap-10 md:grid-cols-2">
-        {/* Form Section */}
-        {/* <div>
-          <NewTodo setData={setData} />
-        </div> */}
-
-        {/* create simple button */}
-        <div className="flex items-center justify-center">
+    // Design a todo homepage with a list of todos and a button to add a new todo
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="mx-auto max-w-4xl rounded-xl bg-white p-6 shadow-lg">
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-gray-800">Todo List</h1>
           <Link
             to="/new"
             className="rounded-lg bg-blue-500 px-6 py-3 text-white transition hover:bg-blue-600"
@@ -58,38 +64,37 @@ export default function Home() {
             Add New Todo
           </Link>
         </div>
-
-        {/* Todo List Section */}
-        <div className="rounded-xl bg-white p-6 shadow-lg">
-          <h2 className="mb-4 text-2xl font-bold text-gray-800">Todo List</h2>
-
+        <div className="flex flex-col gap-4">
           {data.length === 0 ? (
-            <p className="text-gray-500">No todos found.</p>
+            <p className="text-center text-gray-600">No todos available.</p>
           ) : (
-            <ul className="space-y-3">
-              {data.map((item) => (
-                <li
-                  key={item.id}
-                  className="flex justify-between  rounded-lg border border-gray-200 bg-gray-50 p-3 transition hover:bg-gray-100"
-                >
-                  <p className="font-medium text-gray-800">
-                    <Link to={`/todo/${item.id}`} state={{ todo: item }}>
-                      {item.title}
-                    </Link>
-                  </p>
-                  {/* add edit option */}
-                  <p>
-                    <Link
-                      to={`/edit/${item.id}`}
-                      state={{ todo: item }}
-                      className="ml-4 rounded-lg bg-blue-500 px-3 py-1 text-sm text-white transition hover:bg-blue-600"
-                    >
-                      Edit
-                    </Link>
-                  </p>
-                </li>
-              ))}
-            </ul>
+            data.map((todo) => (
+              <div
+                key={todo.id}
+                className="flex items-center justify-between rounded-lg bg-white p-4 shadow-md transition hover:shadow-lg"
+              >
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">
+                    {todo.title}
+                  </h3>
+                  <p className="text-gray-600">{todo.description}</p>
+                </div>
+                <div className="flex gap-2">
+                  <Link
+                    to={`/edit/${todo.id}`}
+                    className="rounded-lg bg-blue-500 px-4 py-2 text-white transition hover:bg-blue-600"
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    onClick={() => deleteTodo(todo.id)}
+                    className="rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))
           )}
         </div>
       </div>
