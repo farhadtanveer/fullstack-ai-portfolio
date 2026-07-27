@@ -3,11 +3,14 @@ from typing import Optional, List
 from enum import Enum
 from utils.dummy import dummy_todos
 from todo.router import router as todo_router
+from user.router import router as user_router
 from todo.schemas import Todo
 from todo import models
+from user import models
 from database import engine, get_db
 from todo.models import Todo as TodoModel
 from sqlalchemy.orm import Session
+from database import Base
 
 # cors
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,8 +30,9 @@ app.add_middleware(
 # Include the todo router
 # set prefix to /api so that all todo endpoints are prefixed with /api
 app.include_router(todo_router, prefix="/api")
+app.include_router(user_router, prefix="/api")
 
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 # from fastapi import FastAPI
 # from typing import Optional, List

@@ -29,7 +29,7 @@ const TodoDetails = () => {
     fetchData();
   }, []);
 
-  if (loading || !data) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center text-lg font-medium text-gray-600">
         Loading...
@@ -45,7 +45,14 @@ const TodoDetails = () => {
     );
   }
 
-  // show todo details page with title, description and completed status
+  if (!data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-lg font-medium text-gray-600">
+        No data found.
+      </div>
+    );
+  }
+
   return (
     // design a simple card with title, description and completed status
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
