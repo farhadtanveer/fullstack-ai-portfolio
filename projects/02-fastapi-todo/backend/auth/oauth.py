@@ -1,27 +1,24 @@
 from fastapi.security import OAuth2PasswordBearer
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta, timezone, datetime
 from typing import Optional
-from jose import jwt, JWTError
+from jose import JWTError, jwt
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/token")
+oauth2_schema = OAuth2PasswordBearer(tokenUrl="api/token")
 
-SECRET_KEY = "5821ad58a8fe27dff414d96c80a16b12ccf2b2270f3958280d51b47d05919136"
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
+SECRET_KEY = "ffe9fdf49426ec409ef59500975cb8b718164a9d2b55e90c078b46279ee3d3ca"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
 
 def create_access_token(
     data: dict,
     expires_delta: Optional[timedelta] = None,
 ):
     to_encode = data.copy()
-
-    if expires_delta is not None:
+    if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(
-            minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-        )
-
+        expire = datetime.now(timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
-
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

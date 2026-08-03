@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
+import { useNavigate } from "react-router";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     username: "",
     password: "",
   });
 
-  const handleSubmit = (e) => {
+  const { user, register } = useContext(AuthContext);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
+    await register(form);
+    navigate("/login");
   };
+
+  console.log(user);
 
   return (
     <div>
