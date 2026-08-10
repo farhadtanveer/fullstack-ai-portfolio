@@ -4,20 +4,20 @@ from database import get_db
 from sqlalchemy.orm import Session
 from user.models import User as UserModel
 from pwdlib import PasswordHash
-from auth.oauth import oauth2_scheme, create_access_token
+from auth.oauth import oauth2_schema, create_access_token, SECRET_KEY
 from jose import jwt, JWTError
-from auth.oauth import SECRET_KEY as secret_key
 
 password_hash = PasswordHash.recommended()
 
 router = APIRouter(
     prefix="/user",
-    tags=["user"],
+    tags=["user"],  
 )
 
-def get_current_user(token:str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+# Get the current authenticated user
+def get_current_user(token:str = Depends(oauth2_schema), db: Session = Depends(get_db)):
     try:
-        payload = jwt.decode(token, secret_key, algorithms=["HS256"])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
         username = payload.get("sub")
 
         if username is None:
@@ -32,6 +32,7 @@ def get_current_user(token:str = Depends(oauth2_scheme), db: Session = Depends(g
         raise HTTPException(status_code=401, detail="User not found")
 
     return user
+
 
 @router.get("/me", response_model=User)
 async def read_current_user(current_user: UserModel = Depends(get_current_user)):

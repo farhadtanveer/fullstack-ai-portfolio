@@ -9,11 +9,11 @@ const Signup = () => {
     password: "",
   });
 
-  const { user, register } = useContext(AuthContext);
+  const { user, signup } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await register(form);
+    await signup(form);
     navigate("/login");
   };
 

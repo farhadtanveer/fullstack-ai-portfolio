@@ -5,7 +5,9 @@ from .schemas import Todo_request, Todo, Todo_title
 from .models import Todo as TodoModel
 from sqlalchemy.orm import Session
 from typing import List
-from auth.oauth import oauth2_scheme
+from auth.oauth import oauth2_schema
+from user.router import get_current_user
+from user.models import User as UserModel
 
 # set prefix to /todo so that all todo endpoints are prefixed with /todo
 # so that the full path to the endpoint is /api/todo/
@@ -17,7 +19,7 @@ router = APIRouter(
 @router.get("/", response_model=List[Todo_title], summary="Get all todos")
 async def root(
     # ekhane keno amra db inject korchi? karon amra database er sathe interact korte chai, tai amra get_db function ke dependency hishebe use korchi. get_db function ta ekta database session return kore, ja amader CRUD operations er jonno dorkar.
-   db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+   db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)
    ):
     """
     - This endpoint returns a list of all todo items.

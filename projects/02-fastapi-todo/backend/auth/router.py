@@ -12,10 +12,8 @@ router = APIRouter(tags=["auth"])
 
 
 @router.post("/token")
-def get_token(
-    request: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db),
-):
+def get_token(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+
     user = db.query(UserModel).filter(UserModel.username == request.username).first()
 
     if not user:
@@ -24,10 +22,11 @@ def get_token(
     if not password_hash.verify(request.password, user.password):
         raise HTTPException(status_code=402, detail="Incorrect password")
     
-    access_token = create_access_token(data={"sub": user.username})
+
+    token = create_access_token(data={"sub": user.username})
 
     return {
-        "access_token": access_token,
+        "access_token": token,
         "token_type": "bearer",
         "user_id": user.id,
         "username": user.username
