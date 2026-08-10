@@ -26,17 +26,17 @@ async def root(
     - Each todo item includes an id, title, description, and completion status.
     - The response is a JSON array of todo items.
     """
-    return db.query(TodoModel).order_by(TodoModel.id.desc()).all()
+    return db.query(TodoModel).filter(TodoModel.user_id == current_user.id).order_by(TodoModel.id.desc()).all()
 
 # Get a specific todo item by ID
 @router.get("/{id}", response_model=Todo, summary="Get a todo by ID")
-async def get_todo(id: int, db: Session = Depends(get_db)):
+async def get_todo(id: int, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
     """
     - This endpoint retrieves a specific todo item by its ID.
     - If the todo item is found, it returns the item as a JSON object.
     - If the todo item is not found, it raises a 404 HTTP exception.
     """
-    todo_model = db.query(TodoModel).filter(TodoModel.id == id).first()
+    todo_model = db.query(TodoModel).filter(TodoModel.user_id == current_user.id, TodoModel.id == id).first()
     if not todo_model:
         raise HTTPException(status_code=404, detail="Todo not found")
     return todo_model
@@ -46,12 +46,14 @@ async def get_todo(id: int, db: Session = Depends(get_db)):
 async def create_todo(
     request: Todo_request,
     db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
     ):
 
     new_todo = TodoModel(
         title=request.title,
         description=request.description,
-        completed=request.completed
+        completed=request.completed,
+        user_id=current_user.id
     )
     db.add(new_todo)
     db.commit()
@@ -64,9 +66,10 @@ async def create_todo(
 async def update_todo(
     id: int,
     request: Todo_request,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: UserModel = Depends(get_current_user)
 ):
-    todo_model = db.query(TodoModel).filter(TodoModel.id == id).first()
+    todo_model = db.query(TodoModel).filter(TodoModel.user_id == current_user.id, TodoModel.id == id).first()
 
     if not todo_model:
      raise HTTPException(status_code=404, detail="Todo not found")
@@ -81,12 +84,13 @@ async def update_todo(
     return todo_model
 
 @router.delete("/{id}/delete_todo", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo( id: int, db: Session = Depends(get_db)):
-    todo_model = db.query(TodoModel).filter(TodoModel.id == id).delete()
+async def delete_todo( id: int, db: Session = Depends(get_db), current_user: UserModel = Depends(get_current_user)):
+    delete_todo = db.query(TodoModel).filter(TodoModel.user_id == current_user.id, TodoModel.id == id).first()
 
-    if not todo_model:
+    if not delete_todo:
         raise HTTPException(status_code=404, detail="Todo not found")
 
+    db.delete(delete_todo)
     db.commit()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
